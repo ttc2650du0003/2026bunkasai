@@ -16,7 +16,7 @@
             font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; 
         }
         .card { 
-            background: white; 
+            background: #ffffff; 
             padding: 40px; 
             border-radius: 20px; 
             box-shadow: 0 8px 30px rgba(0,0,0,0.05); 
@@ -35,10 +35,14 @@
             cursor: pointer; 
             transition: all 0.3s ease;
         }
-        .btn-primary { background: #4AA3DF; color: white; width: 100%; font-size: 1.1rem; }
-        .btn-option { background: #CDE874; color: #333; font-size: 1rem; }
-        button:hover { transform: scale(1.02); filter: brightness(0.9); }
-    </style>
+        .btn-primary { background: #427ab5; color: white; width: 100%; font-size: 1.1rem; }
+        .btn-yes { background: #7da78c; color: #333; }
+        .btn-no { background: #bda6ce; color: #333}
+        .btn-option { font-size: 1rem; }
+        button:hover { transform: scale(1.02); filter: brightness(0.9); }       
+
+
+</style>
 </head>
 <body>
 
@@ -53,15 +57,19 @@
         <div id="quiz-screen" class="hidden">
             <h2 id="question-content" style="font-size: 1.2rem; line-height: 1.5;">質問内容</h2>
             <div class="btn-group">
-                <button id="btn-yes" class="btn-option" onclick="handleAnswer(true)"></button>
-                <button id="btn-no" class="btn-option" onclick="handleAnswer(false)"></button>
+                <button id="btn-yes" class="btn-option btn-yes" onclick="handleAnswer(true)"></button>
+                <button id="btn-no" class="btn-option btn-no" onclick="handleAnswer(false)"></button>
+
+                <!-- <button id="btn-yes" class="btn-option btn-yes" onclick="handleAnswer(true)"></button>
+                <button id="btn-no" class="btn-option btn-no" onclick="handleAnswer(false)"></button> -->
+
             </div>
         </div>
 
         <div id="result-screen" class="hidden">
             <h2 style="color: #888; font-size: 0.9rem;">診断結果</h2>
-            <h1 id="result-text" style="color: #8A2BE2; margin: 20px 0;
-             background: #E0B0FF22; padding: 15px; border-radius: 10px;"></h1>
+            <h1 id="result-text" style="color: #406aaf; margin: 20px 0;
+             background: #e2edff; padding: 15px; border-radius: 10px;"></h1>
             <button class="btn-option" style="background: #eee;
             " onclick="location.reload()">最初からやり直す</button>
         </div>
