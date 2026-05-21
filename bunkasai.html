@@ -42,6 +42,16 @@
         .btn-option { font-size: 1rem; }
         button:hover { transform: scale(1.02); filter: brightness(0.9); }       
         
+        .story-layout { width: 100%; }
+        .story-layout #story-canvas {
+            display: block;
+            width: min(75vw, 320px);
+            height: auto;
+            aspect-ratio: 9 / 16;
+            margin: 20px auto;
+            border-radius: 20px;
+            background: #f5f5f5;
+        }
         .story-canvas { 
             display:block; 
             width: 220px !important; 
@@ -89,7 +99,7 @@
             <button class="btn-option" style="background: #eee; " onclick="location.reload()">最初からやり直す</button>
         </div>
 
-        <div id="story-screen" class="hidden">
+        <div id="story-screen" class="hidden story-layout">
             <h2 style="font-size: 1.2rem; margin-bottom: 20px;">ストーリー画像</h2>
             
             <label for="photo-upload" class="upload-btn">写真を選ぶ</label>
@@ -259,4 +269,3 @@
     </script>
 </body>
 </html>
-
