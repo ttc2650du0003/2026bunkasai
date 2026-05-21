@@ -41,8 +41,19 @@
         .btn-no { background: #acd4eb; color: #333}
         .btn-option { font-size: 1rem; }
         button:hover { transform: scale(1.02); filter: brightness(0.9); }       
-
-        .story-canvas { display:block; width: 220px !important; height: 390px !important; max-width: 100%; border-radius: 20px; background: #f5f5f5; object-fit: cover; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        
+        .story-canvas { 
+            display:block; 
+            width: 220px !important; 
+            height: 390px !important; 
+            max-width: 100%; 
+            overflow: hidden; 
+            contain: content; 
+            border-radius: 20px; 
+            background: #f5f5f5; 
+            object-fit: cover; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08); 
+        }
         .upload-btn { display: inline-block; background: #427ab5; color: white; padding: 16px 24px; border-radius: 999px; margin-top: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
@@ -206,7 +217,19 @@
         document.getElementById("photo-upload").addEventListener("change", function(e){
             const file = e.target.files[0];
             const img = new Image();
-            img.onload = function() { generateStory(img); };
+            // img.onload = function() { generateStory(img); };
+            img.onload = function() {
+                const tempCanvas = document.createElement("canvas");
+                const tempCtx = tempCanvas.getContext("2d");
+                const maxWidth = 1200;
+                const scale = maxWidth / img.width;
+                tempCanvas.width = maxWidth;
+                tempCanvas.height = img.height * scale;
+                tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+                const resizedImg = new Image();
+                resizedImg.onload = function() { generateStory(resizedImg); };
+                resizedImg.src = tempCanvas.toDataURL();
+            };
             img.src = URL.createObjectURL(file);
         });
 
