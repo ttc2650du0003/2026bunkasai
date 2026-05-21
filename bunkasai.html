@@ -11,16 +11,16 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            height: 100vh; 
+            min-height: 100vh; 
             margin: 0; 
             font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; 
         }
         .card { 
             background: #ffffff; 
-            padding: 40px; 
+            padding: 30px 20px; 
             border-radius: 20px; 
             box-shadow: 0 8px 30px rgba(0,0,0,0.05); 
-            width: 350px; 
+            width: min(90vw, 360px); 
             text-align: center; 
             border: 1px solid #eee;
         }
@@ -41,8 +41,8 @@
         .btn-option { font-size: 1rem; }
         button:hover { transform: scale(1.02); filter: brightness(0.9); }       
 
-        .story-canvas { width: 100%; border-radius: 20px; margin-top: 20px; background: #f5f5f5; }
-
+        .story-canvas { width: 220px; height: 390px; border-radius: 20px; background: #f5f5f5; object-fit: cover; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .upload-btn { display: inline-block; background: #427ab5; color: white; padding: 16px 24px; border-radius: 999px; margin-top: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -80,7 +80,8 @@
         <div id="story-screen" class="hidden">
             <h2 style="font-size: 1.2rem; margin-bottom: 20px;">ストーリー画像</h2>
             
-            <input type="file" id="photo-upload" accept="image/*" style="margin-bottom: 20px; width: 100%;">
+            <label for="photo-upload" class="upload-btn">写真を選ぶ</label>
+            <input type="file" id="photo-upload" accept="image/*" hidden>
 
             <canvas id="story-canvas" width="1080" height="1920">    
             </canvas>
