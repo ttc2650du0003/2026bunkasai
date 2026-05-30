@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>デザインスタイル診断</title>
     <style>
-        /* 1. CSS 部分 */
         body {
             background: #fdfdfd;
             display: flex;
@@ -62,7 +61,7 @@
 
         .btn-no {
             background: #acd4eb;
-            color: #333
+            color: #333;
         }
 
         .btn-option {
@@ -74,42 +73,48 @@
             filter: brightness(0.9);
         }
 
-        .story-layout {
-            width: 100%;
+        /* Result screen */
+        .result-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
         }
 
-        .story-layout #story-canvas {
-            display: block;
-            width: min(75vw, 320px);
-            height: auto;
-            aspect-ratio: 9 / 16;
-            margin: 20px auto;
-            border-radius: 20px;
-            background: #f5f5f5;
-        }
-
-        .story-canvas {
-            display: block;
-            width: 220px !important;
-            height: 390px !important;
-            max-width: 100%;
-            overflow: hidden;
-            contain: content;
-            border-radius: 20px;
-            background: #f5f5f5;
-            object-fit: cover;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .upload-btn {
-            display: inline-block;
-            background: #427ab5;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 999px;
-            margin-top: 10px;
-            cursor: pointer;
+        .result-title {
+            color: #406aaf;
+            font-size: 1.4rem;
             font-weight: bold;
+            background: #e2edff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 0 0 20px 0;
+        }
+
+        .result-image-wrap {
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: #f0f0f0;
+            aspect-ratio: 4 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Placeholder style when no image */
+        .result-image-wrap .placeholder {
+            color: #bbb;
+            font-size: 0.85rem;
+            padding: 20px;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -117,120 +122,123 @@
 <body>
 
     <div class="card">
+        <!-- Start -->
         <div id="start-screen">
             <h1 style="font-size: 1.5rem; margin-bottom: 10px;">デザインスタイル診断</h1>
-            <p style="color: #666; margin-bottom: 30px; 
-            font-size: 0.9rem;">あなたにぴったりのデザインを提案します。</p>
+            <p style="color: #666; margin-bottom: 30px; font-size: 0.9rem;">あなたにぴったりのデザインを提案します。</p>
             <button class="btn-primary" onclick="initQuiz()">診断を始める</button>
         </div>
 
+        <!-- Quiz -->
         <div id="quiz-screen" class="hidden">
             <h2 id="question-content" style="font-size: 1.2rem; line-height: 1.5;">質問内容</h2>
             <div class="btn-group">
                 <button id="btn-yes" class="btn-option btn-yes" onclick="handleAnswer(true)"></button>
                 <button id="btn-no" class="btn-option btn-no" onclick="handleAnswer(false)"></button>
-
-                <!-- <button id="btn-yes" class="btn-option btn-yes" onclick="handleAnswer(true)"></button>
-                <button id="btn-no" class="btn-option btn-no" onclick="handleAnswer(false)"></button> -->
-
             </div>
         </div>
 
+        <!-- Result -->
         <div id="result-screen" class="hidden">
-            <h2 style="color: #888; font-size: 0.9rem;">診断結果</h2>
-            <h1 id="result-text"
-                style="color: #406aaf; margin: 20px 0; background: #e2edff; padding: 15px; border-radius: 10px;"></h1>
-            <div class="btn-group">
-                <button class="btn-primary" onclick="openStoryGenerator()">ストーリー画像を作る</button>
-            </div>
-            <p style="font-size: 0.8rem; color: #888; margin-top: 15px; ">画像を保存して、インスタでシェアしよう！</p>
-            <button class="btn-option" style="background: #eee; " onclick="location.reload()">最初からやり直す</button>
-        </div>
+            <p class="result-label">診断結果</p>
+            <h1 id="result-text" class="result-title"></h1>
 
-        <div id="story-screen" class="hidden story-layout">
-            <h2 style="font-size: 1.2rem; margin-bottom: 20px;">ストーリー画像</h2>
-
-            <label for="photo-upload" class="upload-btn">写真を選ぶ</label>
-            <input type="file" id="photo-upload" accept="image/*" style="display:none;">
-
-            <canvas id="story-canvas" width="1080" height="1920">
-            </canvas>
-
-            <div class="btn-group">
-                <button class="btn-primary" onclick="downloadStory()">ダウンロード</button>
-                <button class="btn-option" style="background: #eee" onclick="location.reload()">最初に戻る</button>
+            <div class="result-image-wrap">
+                <img id="result-image" src="" alt="診断結果画像"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <div class="placeholder" style="display:none;">
+                    ここに画像が表示されます。<br>
+                    <code>resultImages</code> の<br>
+                    パスを設定してください。
+                </div>
             </div>
 
+            <div class="btn-group">
+                <button class="btn-option" style="background: #eee;" onclick="location.reload()">最初からやり直す</button>
+            </div>
         </div>
     </div>
 
     <script>
-        /* 2. JavaScript 部分 */
+        // =============================================
+        // 🖼️ 結果ごとの画像パスをここで設定してください
+        // =============================================
+        const resultImages = {
+            "英字新聞風":  "img/news.png",    // ← 差し替えてください
+            "文化祭チラシ": "img/festival.png",    // ← 差し替えてください
+            "写真コラージュ": "img/collection.png",   // ← 差し替えてください
+            "ゲームチラシ": "img/game.png",        // ← 差し替えてください
+            "結婚式関連":  "img/wedding.png",       // ← 差し替えてください
+            "メニュー表":  "img/menu.png"          // ← 差し替えてください
+        };
+
+        // =============================================
+        // Quiz data
+        // =============================================
         const quizData = {
             "start": {
                 q: "どのような雰囲気が好きですか？",
                 yes: { label: "賑やか", next: "trend" },
-                no: { label: "穏やか", next: "humanTouch" }
+                no:  { label: "穏やか", next: "humanTouch" }
             },
             "trend": {
                 q: "流行やSNS映えをチェックしますか？",
-                yes: { label: "チェックする", next: "colorDesign" },
-                no: { label: "チェックしない", next: "focusOn" }
+                yes: { label: "チェックする",    next: "colorDesign" },
+                no:  { label: "チェックしない",  next: "focusOn" }
             },
             "humanTouch": {
                 q: "人の温かみとデジタル、どちらが好き？",
-                yes: { label: "人の温かみ", next: "focusOn" },
-                no: { label: "デジタルで無機質", next: "gameWorld" }
+                yes: { label: "人の温かみ",      next: "focusOn" },
+                no:  { label: "デジタルで無機質", next: "gameWorld" }
             },
             "colorDesign": {
                 q: "デザインする時の色の好みは？",
-                yes: { label: "元気でカラフルな色", next: "eventSide" },
-                no: { label: "落ち着いたシックな色", next: "mood" }
+                yes: { label: "元気でカラフルな色",  next: "eventSide" },
+                no:  { label: "落ち着いたシックな色", next: "mood" }
             },
             "eventSide": {
                 q: "文化祭やイベントでは？",
-                yes: { label: "運営側", result: "文化祭チラシ" },
-                no: { label: "お客さん側", result: "メニュー表" }
+                yes: { label: "運営側",    result: "文化祭チラシ" },
+                no:  { label: "お客さん側", result: "メニュー表" }
             },
             "focusOn": {
                 q: "一つの事にこだわりますか？",
-                yes: { label: "こだわる", next: "mood" },
-                no: { label: "こだわらない", next: "characterDesign" }
+                yes: { label: "こだわる",    next: "mood" },
+                no:  { label: "こだわらない", next: "characterDesign" }
             },
             "mood": {
                 q: "雰囲気や空気感は好き？",
                 yes: { label: "エモいが好き", result: "写真コラージュ" },
-                no: { label: "エモいが嫌い", result: "結婚式関連" }
+                no:  { label: "エモいが嫌い", result: "結婚式関連" }
             },
             "gameWorld": {
                 q: "ゲームの世界観は好き？",
                 yes: { label: "好き", next: "characterDesign" },
-                no: { label: "嫌い", next: "designStyle" }
+                no:  { label: "嫌い", next: "designStyle" }
             },
             "characterDesign": {
                 q: "キャラデザイン物が好き？",
                 yes: { label: "好き", result: "ゲームチラシ" },
-                no: { label: "嫌い", result: "英字新聞風" }
+                no:  { label: "嫌い", result: "英字新聞風" }
             },
             "designStyle": {
                 q: "デザインのスタイルは？",
-                yes: { label: "シンプルで洗練", next: "selfWork" },
-                no: { label: "がちゃがちゃ", next: "designPreference" }
+                yes: { label: "シンプルで洗練",  next: "selfWork" },
+                no:  { label: "がちゃがちゃ",    next: "designPreference" }
             },
             "selfWork": {
                 q: "自分で作るなら",
-                yes: { label: "綺麗さ・上品さ", result: "結婚式関連" },
-                no: { label: "元気いっぱいポップ", result: "文化祭チラシ" }
+                yes: { label: "綺麗さ・上品さ",   result: "結婚式関連" },
+                no:  { label: "元気いっぱいポップ", result: "文化祭チラシ" }
             },
             "designPreference": {
                 q: "デザインの好みは？",
                 yes: { label: "シンプルで静か", result: "英字新聞風" },
-                no: { label: "派手で個性的", result: "ゲームチラシ" }
+                no:  { label: "派手で個性的",   result: "ゲームチラシ" }
             }
         };
 
         let currentNode = "start";
-        let currentResult = "";
 
         function initQuiz() {
             document.getElementById('start-screen').classList.add('hidden');
@@ -258,201 +266,23 @@
         }
 
         function showResult(title) {
-            currentResult = title;
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('result-text').innerText = title;
+
+            const imgEl = document.getElementById('result-image');
+            const placeholder = imgEl.nextElementSibling;
+            const src = resultImages[title];
+
+            if (src) {
+                imgEl.src = src;
+                imgEl.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                imgEl.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
         }
-
-        function openStoryGenerator() {
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('story-screen').classList.remove('hidden');
-        }
-
-        const canvas = document.getElementById("story-canvas");
-        const ctx = canvas.getContext("2d");
-
-        document.getElementById("photo-upload").addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            const img = new Image();
-            // img.onload = function() { generateStory(img); };
-            img.onload = function () {
-                const tempCanvas = document.createElement("canvas");
-                const tempCtx = tempCanvas.getContext("2d");
-                const maxWidth = 1200;
-                const scale = maxWidth / img.width;
-                tempCanvas.width = maxWidth;
-                tempCanvas.height = img.height * scale;
-                tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
-                const resizedImg = new Image();
-                resizedImg.onload = function () { generateStory(resizedImg); };
-                resizedImg.src = tempCanvas.toDataURL();
-            };
-            img.src = URL.createObjectURL(file);
-        });
-
-        // insta story //
-        function generateStory(img) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // background //
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, 1080, 1920);
-
-            // selfie //
-            ctx.drawImage(img, 90, 250, 900, 1200);
-
-            // result //
-            // ctx.fillStyle = "#111";
-            // ctx.font = "bold 70px sans-serif";
-
-            // instapic //
-            // ctx.fillStyle = "white";
-            // ctx.fillRect( x - 15, y - 15, drawWidth + 30, drawHeight + 30);
-
-            // different result!! //
-            // ===== style =====
-
-            ctx.textAlign = "center";
-
-            // 上方小字
-            ctx.fillStyle = "#999";
-
-            ctx.font = "38px sans-serif";
-
-            ctx.fillText(
-                "design diagnosis",
-                540,
-                100
-            );
-
-            // ===== result data =====
-
-            let title = "";
-            let description = "";
-            let accentColor = "#222";
-
-            if (currentResult === "英字新聞風") {
-
-                title = "newspaper mood";
-
-                description =
-                    "洗練された\nエディトリアルタイプ";
-
-                accentColor = "#222";
-
-            }
-
-            else if (currentResult === "文化祭チラシ") {
-
-                title = "festival flyer";
-
-                description =
-                    "文化祭を盛り上げる\nポップデザインタイプ";
-
-                accentColor = "#ff7eb6";
-
-            }
-
-            else if (currentResult === "写真コラージュ") {
-
-                title = "photo collage";
-
-                description =
-                    "ノスタルジックで\nエモーショナルな雰囲気";
-
-                accentColor = "#444";
-
-            }
-
-            else if (currentResult === "ゲームチラシ") {
-
-                title = "game poster";
-
-                description =
-                    "デジタル感のある\n近未来タイプ";
-
-                accentColor = "#4568ff";
-
-            }
-
-            else if (currentResult === "結婚式関連") {
-
-                title = "bridal magazine";
-
-                description =
-                    "上品でやわらかい\nロマンティックタイプ";
-
-                accentColor = "#c7a4ff";
-
-            }
-
-            else if (currentResult === "メニュー表") {
-
-                title = "cafe menu";
-
-                description =
-                    "ナチュラルで\n落ち着いたデザイン";
-
-                accentColor = "#9b6b43";
-
-            }
-
-            // ===== 主標 =====
-
-            ctx.fillStyle = accentColor;
-
-            ctx.font = "bold 88px sans-serif";
-
-            ctx.fillText(
-                title,
-                540,
-                190
-            );
-
-            // ===== 說明 =====
-
-            ctx.fillStyle = "#666";
-
-            ctx.font = "42px sans-serif";
-
-            const lines = description.split("\n");
-
-            ctx.fillText(
-                lines[0],
-                540,
-                1660
-            );
-
-            ctx.fillText(
-                lines[1],
-                540,
-                1725
-            );
-
-            // ===== 日期 =====
-
-            ctx.fillStyle = "#aaa";
-
-            ctx.font = "30px sans-serif";
-
-            ctx.fillText(
-                "05 / 22 / 2026",
-                540,
-                1820
-            );
-
-        }
-
-        function downloadStory() {
-            const link = document.createElement("a");
-            link.download = "story.png";
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-
-        }
-
     </script>
 </body>
-
 </html>
