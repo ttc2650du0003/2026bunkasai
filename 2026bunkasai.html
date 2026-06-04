@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>デザインスタイル診断</title>
+    <style>
+        /* 1. CSS 部分 */
+        body { 
+            background: #fdfdfd; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; 
+        }
+        .card { 
+            background: #ffffff; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05); 
+            width: 350px; 
+            text-align: center; 
+            border: 1px solid #eee;
+        }
+        .hidden { display: none !important; }
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
+        
+        button { 
+            border: none; 
+            padding: 18px; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+        }
+        .btn-primary { background: #427ab5; color: white; width: 100%; font-size: 1.1rem; }
+        .btn-yes { background: #c9e400; color: #333; }
+        .btn-no { background: #00cae5; color: #333}
+        .btn-option { font-size: 1rem; }
+        button:hover { transform: scale(1.02); filter: brightness(0.9); }       
+
+
+</style>
+</head>
+<body>
+
+    <div class="card">
+        <div id="start-screen">
+            <h1 style="font-size: 1.5rem; margin-bottom: 10px;">デザインスタイル診断</h1>
+            <p style="color: #666; margin-bottom: 30px; 
+            font-size: 0.9rem;">あなたにぴったりのデザインを提案します。</p>
+            <button class="btn-primary" onclick="initQuiz()">診断を始める</button>
+        </div>
+
+        <div id="quiz-screen" class="hidden">
+            <h2 id="question-content" style="font-size: 1.2rem; line-height: 1.5;">質問内容</h2>
+            <div class="btn-group">
+                <button id="btn-yes" class="btn-option btn-yes" onclick="handleAnswer(true)"></button>
+                <button id="btn-no" class="btn-option btn-no" onclick="handleAnswer(false)"></button>
+
+                <!-- <button id="btn-yes" class="btn-option btn-yes" onclick="handleAnswer(true)"></button>
+                <button id="btn-no" class="btn-option btn-no" onclick="handleAnswer(false)"></button> -->
+
+            </div>
+        </div>
+
+        <div id="result-screen" class="hidden">
+            <h2 style="color: #888; font-size: 0.9rem;">診断結果</h2>
+            <h1 id="result-text" style="color: #406aaf; margin: 20px 0;
+             background: #e2edff; padding: 15px; border-radius: 10px;"></h1>
+            <button class="btn-option" style="background: #eee;
+            " onclick="location.reload()">最初からやり直す</button>
+        </div>
+    </div>
+
+    <script>
+        /* 2. JavaScript 部分 */
+        const quizData = {
+            "start": {
+                q: "どのような雰囲気が好きですか？",
+                yes: { label: "賑やか", next: "trend" },
+                no: { label: "穏やか", next: "humanTouch" }
+            },
+            "trend": {
+                q: "流行やSNS映えをチェックしますか？",
+                yes: { label: "チェックする", next: "colorDesign" },
+                no: { label: "チェックしない", next: "focusOn" }
+            },
+            "humanTouch": {
+                q: "人の温かみとデジタル、どちらが好き？",
+                yes: { label: "人の温かみ", next: "focusOn" },
+                no: { label: "デジタルで無機質", next: "gameWorld" }
+            },
+            "colorDesign": {
+                q: "デザインする時の色の好みは？",
+                yes: { label: "元気でカラフルな色", next: "eventSide" },
+                no: { label: "落ち着いたシックな色", next: "mood" }
+            },
+            "eventSide": {
+                q: "文化祭やイベントでは？",
+                yes: { label: "運営側", result: "文化祭チラシ" },
+                no: { label: "お客さん側", result: "メニュー表" }
+            },
+            "focusOn": {
+                q: "一つの事にこだわりますか？",
+                yes: { label: "こだわる", next: "mood" },
+                no: { label: "こだわらない", next: "characterDesign" }
+            },
+            "mood": {
+                q: "雰囲気や空気感は好き？",
+                yes: { label: "エモいが好き", result: "文化祭チラシ" },
+                no: { label: "エモいが嫌い", result: "香水チラシ" }
+            },
+            "gameWorld": {
+                q: "ゲームの世界観は好き？",
+                yes: { label: "好き", next: "characterDesign" },
+                no: { label: "嫌い", next: "designStyle" }
+            },
+            "characterDesign": {
+                q: "キャラデザイン物が好き？",
+                yes: { label: "好き", result: "ゲームチラシ" },
+                no: { label: "嫌い", result: "英字新聞風" }
+            },
+            "designStyle": {
+                q: "デザインのスタイルは？",
+                yes: { label: "シンプルで洗練", next: "selfWork" },
+                no: { label: "がちゃがちゃ", next: "designPreference" }
+            },
+            "selfWork": {
+                q: "自分で作るなら",
+                yes: { label: "綺麗さ・上品さ", result: "香水チラシ"},
+                no: { label: "元気いっぱいポップ", result: "文化祭チラシ"}
+            },
+            "designPreference": {
+                q: "デザインの好みは？",
+                yes: { label: "シンプルで静か", result: "英字新聞風" },
+                no: { label: "派手で個性的", result: "ゲームチラシ" }
+            }
+        };
+
+        let currentNode = "start";
+
+        function initQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function handleAnswer(isYes) {
+            const choice = isYes ? "yes" : "no";
+            const nextStep = quizData[currentNode][choice];
+
+            if (nextStep.result) {
+                showResult(nextStep.result);
+            } else {
+                currentNode = nextStep.next;
+                renderQuestion();
+            }
+        }
+
+        function renderQuestion() {
+            const data = quizData[currentNode];
+            document.getElementById('question-content').innerText = data.q;
+            document.getElementById('btn-yes').innerText = data.yes.label;
+            document.getElementById('btn-no').innerText = data.no.label;
+        }
+
+        function showResult(title) {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-text').innerText = title;
+        }
+    </script>
+</body>
+</html>
+
